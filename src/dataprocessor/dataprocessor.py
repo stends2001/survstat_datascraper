@@ -30,7 +30,7 @@ class DataProcessingOrchestrator:
     - a preview of the dataframe being processed
 
     """
-    def __init__(self, df: Union[pd.DataFrame, gpd.GeoDataFrame] = None, category: str = None ,name: Optional[str] = "unnamed"):
+    def __init__(self, df: Union[pd.DataFrame, gpd.GeoDataFrame] = None, category: str = None, name: Optional[str] = "unnamed"):
         self.df             = df
         self.name           = name
         self.realm          = 'dataprocessing'
