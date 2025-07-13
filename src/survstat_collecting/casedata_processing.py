@@ -13,7 +13,7 @@ today = datetime.now()
 
 
 def preprocess_survstat_data(diseases:  Union[List[str], str], 
-                             years: Union[List[str], range, str],
+                             years: Union[List[str], range, str, int],
                              raw_data_dir: Union[str, Path],
                              processed_data_dir: Union[str, Path],
                              how: str
@@ -25,7 +25,7 @@ def preprocess_survstat_data(diseases:  Union[List[str], str],
     ----------
     diseases: Union[list[str], str]
         List of diseases to process.
-    years: Union[list[int], range, str]
+    years: Union[list[int], range, str, int]
         List of years to process.
     raw_data_dir: str or Path
         Directory containing raw yearly data files.
@@ -39,7 +39,7 @@ def preprocess_survstat_data(diseases:  Union[List[str], str],
     Only updating the current year:
     >>> preprocess_survstat_data(
     >>>        diseases=list(diseases_dict.values()), 
-    >>>        years= str(current_year),
+    >>>        years= current_year,
     >>>        raw_data_dir=directories_dict['dir_data_raw'], 
     >>>        processed_data_dir=directories_dict['dir_data_preprocessed'],
     >>>        how='update'
@@ -115,10 +115,14 @@ def preprocess_yearfile(yearfile: DataProcessingOrchestrator, year: str) -> Data
     """
     preprocesses a single yearfile which is properly returned.
     """
+    # Create a list of county names excluding 'City of Berlin': the RKI reports casedata in Berlin on district-level
+    county_names = list(map_countynames_germany_eng_de.keys())
+    county_names.remove('City of Berlin') 
+    
     yearfile = (
         yearfile
         .rename_cols({"Unnamed: 0": 'week'})
-        .pivot_longer(index = 'week', levels_from= list(map_countynames_germany_eng_de.keys()).remove('City of Berlin'), value_colname= 'cases', levels_colname= "county")
+        .pivot_longer(index = 'week', levels_from= county_names, value_colname= 'cases', levels_colname= "county")
         .mutate(new_colname='year', value=year)
         .change_dtype({'year': 'str'})
         .impute(colnames = 'cases', method ='zero')

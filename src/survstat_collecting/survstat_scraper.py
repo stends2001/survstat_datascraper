@@ -239,7 +239,7 @@ def scraper(disease: str,
     else:
         raise FileNotFoundError("No survstat ZIP file found after download")
 
-def move_zip(downloads_path: Path,
+def extract_zip(downloads_path: Path,
              latest_zip: Path,
              disease_name_alias: str,
              output_directory: Path,
@@ -301,10 +301,11 @@ def scrape_survstat_data(disease_names: Union[Dict, List, str],
         download-directory where .zip folders are introduced to the system.
     output_directory: Union[str, Path]
         Directory to save the data
+        
     Examples:
     --------
     >>> scrape_survstat_data(disease_names=diseases_dict, 
-    >>>                      years=str(current_year), 
+    >>>                      years=current_year, 
     >>>                      output_directory=directories_dict['dir_data_raw'], 
     >>>                      downloads_directory=directories_dict['dir_downloads'])
 
@@ -312,7 +313,7 @@ def scrape_survstat_data(disease_names: Union[Dict, List, str],
     ---------
     remove_downloads_folder
     scraper
-    move_zip
+    extract_zip
     """
     # input validation
     if isinstance(years, int):
@@ -340,18 +341,16 @@ def scrape_survstat_data(disease_names: Union[Dict, List, str],
     # Clearing up all survstat zip folders in the downloads folder
     remove_downloads_folder(downloads_directory)    
 
-    # Decide whether to use tqdm for disease_names
+    # use tqdm if there are multiple diseases
     bug_iter = tqdm(disease_names.items(), desc="Diseases") if len(disease_names) > 1 else disease_names.items()
-    # Inside the loop:
 
     for bug_name_rki, bug_name_alias in bug_iter:
-
-        # Decide whether to use tqdm for years
+        # use tqdm if there are multiple years
         year_iter = tqdm(years, desc=f"Years for {bug_name_alias}") if len(years) > 1 else years
         for yy in year_iter:
             # Downloading the data
             zip = scraper(bug_name_rki, yy, downloads_directory)
 
-            move_zip(downloads_directory, zip, bug_name_alias, output_directory, yy)
+            extract_zip(downloads_directory, zip, bug_name_alias, output_directory, yy)
 
     print('✅ all data has been scraped')

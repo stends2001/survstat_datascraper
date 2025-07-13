@@ -11,9 +11,12 @@ def main():
     
     Workflow:
     1. Read disease configuration from log file
-    2. Scrape current year data from SurvStat@RKI
+    2. Scrape data from SurvStat@RKI
     3. Process and merge the downloaded data
     4. Log the script execution
+
+    By default, this script will only scrape the current year data for all diseases.
+    Afterwards, the processed data is updated.
     
     The diseases for which data is downloaded and processed are extracted from log.txt.
     You can adjust the diseases by modifying the log.txt file or changing the variables here.
@@ -36,7 +39,7 @@ def main():
         # Step 1: Scrape data from SurvStat
         scrape_survstat_data(
             disease_names=diseases_dict, 
-            years= str(current_year), 
+            years= current_year, 
             output_directory=directories_dict['dir_data_raw'], 
             downloads_directory=directories_dict['dir_downloads']
         )
@@ -46,7 +49,7 @@ def main():
         # Step 2: Process and merge data
         preprocess_survstat_data(
             diseases=list(diseases_dict.values()), 
-            years= str(current_year),
+            years= current_year,
             raw_data_dir=directories_dict['dir_data_raw'], 
             processed_data_dir=directories_dict['dir_data_preprocessed'],
             how='update'

@@ -40,6 +40,8 @@ def preview_epicurve(disease_name: str):
     ax.plot(national_data['timestamp'], national_data['cases'])
     ax.grid()
     ax.set_title(f'Weekly reported cases of {disease_name} in Germany \nBetween {national_data["timestamp"].min().strftime("%Y-%m-%d")} and {national_data["timestamp"].max().strftime("%Y-%m-%d")}')
+    ax.set_ylabel('Weekly cases')
+
     if len(national_data) < 5 * 52:
         ax.xaxis.set_major_locator(mdates.MonthLocator(interval=6))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
