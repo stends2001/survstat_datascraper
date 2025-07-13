@@ -5,8 +5,31 @@ import re
 
 log_file_path = directories_dict['project_root'] / "log.txt"
 
-def log_script_run(disease_dict, years, log_file_path=log_file_path):
+def log_script_run(disease_dict, years, log_file_path=log_file_path, append_mode=False):
+    """
+    Logs script execution with disease information.
+    
+    Parameters:
+    ----------
+    disease_dict : dict
+        Dictionary mapping disease names to slugs
+    years : list or range
+        Years being processed
+    log_file_path : Path, optional
+        Path to log file
+    append_mode : bool, optional
+        If True, merges new diseases with existing ones from log file.
+        If False, overwrites the entire log file (default behavior).
+    """
     run_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    if append_mode:
+        # Read existing diseases from log file
+        existing_diseases = read_log(log_file_path)
+        # Merge with new diseases (new diseases take precedence)
+        merged_diseases = {**existing_diseases, **disease_dict}
+        disease_dict = merged_diseases
+        print(f"📝 Appending {len(disease_dict) - len(existing_diseases)} new diseases to existing {len(existing_diseases)} diseases")
 
     log_entries = [
         f"\n--- Script Run: {run_time} ---",
@@ -105,3 +128,31 @@ def read_log(log_file_path=log_file_path):
         print("No valid last run timestamp found.")
 
     return disease_dict
+
+def add_diseases_to_log(new_diseases, log_file_path=log_file_path):
+    """
+    Convenience function to add new diseases to the existing log.
+    
+    Parameters:
+    ----------
+    new_diseases : dict
+        Dictionary of new diseases to add {name: slug}
+    log_file_path : Path, optional
+        Path to log file
+        
+    Returns:
+    -------
+    dict
+        Updated disease dictionary with all diseases (existing + new)
+    """
+    existing_diseases = read_log(log_file_path)
+    merged_diseases = {**existing_diseases, **new_diseases}
+    
+    # Create a temporary years list for logging
+    current_year = datetime.now().year
+    all_years = range(2001, current_year + 1)
+    
+    # Log with append mode
+    log_script_run(merged_diseases, all_years, log_file_path, append_mode=True)
+    
+    return merged_diseases
