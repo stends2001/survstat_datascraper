@@ -26,8 +26,6 @@ def main():
         current_year = datetime.now().year
         diseases_dict = read_log()
 
-        diseases_dict = {'Dengue' : 'dengue'}
-
         if len(diseases_dict) == 0:
             raise ValueError('No diseases found! Check the log.txt file.')
 
@@ -38,7 +36,7 @@ def main():
         # Step 1: Scrape data from SurvStat
         scrape_survstat_data(
             disease_names=diseases_dict, 
-            years=all_years, # str(current_year), 
+            years= str(current_year), 
             output_directory=directories_dict['dir_data_raw'], 
             downloads_directory=directories_dict['dir_downloads']
         )
@@ -47,11 +45,11 @@ def main():
         
         # Step 2: Process and merge data
         preprocess_survstat_data(
-            bugs=list(diseases_dict.values()), 
-            years= all_years, #str(current_year),
+            diseases=list(diseases_dict.values()), 
+            years= str(current_year),
             raw_data_dir=directories_dict['dir_data_raw'], 
             processed_data_dir=directories_dict['dir_data_preprocessed'],
-            how='reconstruct'
+            how='update'
         )
 
         # Step 3: Log the execution (append new diseases to existing ones)

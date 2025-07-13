@@ -18,7 +18,7 @@ This project automates the download and processing of disease surveillance data 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/stends2001/survstat_loader.git
+git clone https://github.com/stends2001/survstat_data.git
 cd survstat_loader
 ```
 
@@ -55,7 +55,7 @@ scrape_survstat_data(
 
 # Process the downloaded data
 preprocess_survstat_data(
-    bugs=['Campylobacter'],
+    diseases=['Campylobacter'],
     years='2025',
     raw_data_dir=directories_dict['dir_data_raw'], 
     processed_data_dir=directories_dict['dir_data_preprocessed'],

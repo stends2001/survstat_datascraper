@@ -7,8 +7,12 @@ import pandas as pd
 from typing import Optional, Union, List
 from pathlib import Path
 import warnings
+from datetime import datetime
 
-def preprocess_survstat_data(bugs:  Union[List[str], str], 
+today = datetime.now()
+
+
+def preprocess_survstat_data(diseases:  Union[List[str], str], 
                              years: Union[List[str], range, str],
                              raw_data_dir: Union[str, Path],
                              processed_data_dir: Union[str, Path],
@@ -19,7 +23,7 @@ def preprocess_survstat_data(bugs:  Union[List[str], str],
 
     Parameters:
     ----------
-    bugs: Union[list[str], str]
+    diseases: Union[list[str], str]
         List of diseases to process.
     years: Union[list[int], range, str]
         List of years to process.
@@ -32,20 +36,31 @@ def preprocess_survstat_data(bugs:  Union[List[str], str],
 
     Example:
     -------
-    >>> preprocess_survstat_data(bugs=list(diseases_dict.values()), 
-    >>>                          years = all_years,
-    >>>                          raw_data_dir=directories_dict['dir_data_raw'], 
-    >>>                          processed_data_dir=directories_dict['dir_data_preprocessed'],
-    >>>                          how='reconstruct')
+    Only updating the current year:
+    >>> preprocess_survstat_data(
+    >>>        diseases=list(diseases_dict.values()), 
+    >>>        years= str(current_year),
+    >>>        raw_data_dir=directories_dict['dir_data_raw'], 
+    >>>        processed_data_dir=directories_dict['dir_data_preprocessed'],
+    >>>        how='update'
+    >>>    )
 
+    Reconstructing the entire dataset:
+    >>> preprocess_survstat_data(
+    >>>        diseases=list(diseases_dict.values()), 
+    >>>        years= all_years,
+    >>>        raw_data_dir=directories_dict['dir_data_raw'], 
+    >>>        processed_data_dir=directories_dict['dir_data_preprocessed'],
+    >>>        how='reconstruct'
+    >>>    )
     See also:
     ---------
     preprocess_yearfile
     """
 
     # input validation
-    if not isinstance(bugs, list):
-        bugs = [bugs]
+    if not isinstance(diseases, list):
+        diseases = [diseases]
 
     if isinstance(years, (str, int)):
         years = [str(years)]
@@ -53,23 +68,20 @@ def preprocess_survstat_data(bugs:  Union[List[str], str],
     if isinstance(years, (range, list)):
         years = [str(yy) for yy in years]
 
-    for bug in bugs:
-        raw_datafolder      = os.path.join(str(raw_data_dir), bug)
-        processed_datafolder= os.path.join(str(processed_data_dir), bug)
-        
+    for disease in diseases:
+        raw_datafolder      = os.path.join(str(raw_data_dir), disease)
+        processed_datafolder= os.path.join(str(processed_data_dir), disease)
         # Initialize merged_dataset based on mode
         if how == 'update':
-            years_int = [int(yy) for yy in years]
-            merged_dataset = DataProcessingOrchestrator().import_data(filename = f"{bug}.csv", directory = processed_datafolder).filter([('year',years_int,'!in')])
-
+            merged_dataset = DataProcessingOrchestrator().import_data(filename = f"{disease}.csv", directory = processed_datafolder).change_dtype({'year': 'str'}).filter([('year',years,'!in')])
         elif how == 'reconstruct':  # reconstruct mode
-            merged_dataset = DataProcessingOrchestrator(name = f"{bug}_merged")
+            merged_dataset = DataProcessingOrchestrator(name = f"{disease}_merged")
 
         else:
             raise ValueError(f"Invalid value for 'how': {how}. Please choose from ['reconstruct', 'update'].")
 
-        for year in tqdm(years, desc=f"processing {bug}"):
-            filename = f"{bug}_{year}.csv"
+        for year in tqdm(years, desc=f"processing {disease}"):
+            filename = f"{disease}_{year}.csv"
             yearfile = DataProcessingOrchestrator().import_data(filename = filename, directory = raw_datafolder, encoding= 'utf-16', separator="\t", colnames_row=1)
             yearfile_preprocessed = preprocess_yearfile(yearfile, year)
 
@@ -88,13 +100,15 @@ def preprocess_survstat_data(bugs:  Union[List[str], str],
                         warnings.filterwarnings("ignore", category=FutureWarning, message=".*DataFrame concatenation with empty or all-NA entries.*")
                         concatenated_df = pd.concat([existing_df, new_df], ignore_index=True)                                  
                     
-                    merged_dataset = DataProcessingOrchestrator(concatenated_df, name=f"{bug}_merged")
+                    merged_dataset = DataProcessingOrchestrator(concatenated_df, name=f"{disease}_merged")
                 else:
                     raise TypeError("Expected pandas DataFrames for concatenation")
 
+        merged_dataset.change_dtype({'timestamp': 'datetime64[ns]'}).filter(conditions = [('timestamp', today, "<")])
+
         if merged_dataset.status and processed_datafolder is not None:
             os.makedirs(processed_datafolder, exist_ok=True)
-            merged_dataset.save_data(filename = f"{bug}.csv", directory = processed_datafolder)
+            merged_dataset.save_data(filename = f"{disease}.csv", directory = processed_datafolder)
     print("✅ all data has been (pre)processed")
 
 def preprocess_yearfile(yearfile: DataProcessingOrchestrator, year: str) -> DataProcessingOrchestrator:

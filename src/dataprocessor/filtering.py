@@ -18,7 +18,7 @@ def apply_condition(df: pd.DataFrame,
             ">=":       lambda col, val: df[col] >= val,
             "!=":       lambda col, val: df[col] != val,
             "in":       lambda col, val: df[col].isin(_input_to_list(val)),
-            "!in":      lambda col, val: df[col].isin(_input_to_list(val)),
+            "!in":      lambda col, val: ~df[col].isin(_input_to_list(val)),
             "contains": lambda col, val: df[col].str.contains(val, case=False, na=False)
         } 
     
