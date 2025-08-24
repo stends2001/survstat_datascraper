@@ -5,7 +5,7 @@ import os
 from .filtering import apply_condition
 from shapely.geometry import Point, LineString
 from pathlib import Path
-
+pd.set_option('future.no_silent_downcasting', True)
 class DataProcessingOrchestrator:
     """ 
     This class represents the main class used for the processing (and preprocessing) of dataframes.

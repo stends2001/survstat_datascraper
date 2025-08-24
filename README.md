@@ -6,6 +6,8 @@ A Python tool for automated data collection and processing from the [SurvStat@RK
 
 This project automates the download and processing of disease surveillance data from the Robert Koch Institute (RKI). Using Selenium, it downloads data for specified diseases and years, organized by week and German administrative districts (Kreise). The data is then processed and harmonized using regional identification codes.
 
+For a walkthrough of the pipleine in this rep, have a look at *Extracting_survstat_data.ipynb*, in src.
+
 ## Features
 
 - **Automated Data Collection**: Downloads disease data from SurvStat@RKI for multiple diseases and years
@@ -63,6 +65,24 @@ preprocess_survstat_data(
 )
 ```
 
+## Demo with Sample Data
+
+To see the tool in action with sample data:
+
+1. **Generate sample data** (if you have real data):
+```bash
+python src/create_github_sample.py
+```
+
+2. **View the demo notebook**:
+   - Open `src/Demo_measles_visualization.ipynb` to see a visualization of national measles data
+   - The sample data contains real national measles data aggregated from the SurvStat system
+
+3. **Sample data structure**:
+   - `data/sample/measles_national.csv`: National weekly measles cases
+   - Contains: `timestamp`, `cases` columns
+   - Safe to share on GitHub (national-level data only)
+
 ## Project Structure
 
 ```
@@ -71,15 +91,25 @@ survstat_loader/
 │   ├── dataprocessor/          # Data processing modules
 │   ├── survstat_collecting/    # Web scraping and data collection
 │   ├── utils/                  # Utility functions
-│   └── update_survstatdata.py  # Main execution script
-│   └── preview_epicurve.py     # show weekly casenumbers of downloaded data
+│   ├── update_survstatdata.py  # Main execution script
+│   ├── preview_epicurve.py     # Show weekly casenumbers of downloaded data
+│   ├── create_github_sample.py # Create sample data for GitHub
+│   └── Demo_measles_visualization.ipynb # Demo notebook
 ├── data/                       # Data storage (not in git)
 │   ├── raw/                    # Raw downloaded files
 │   ├── preprocessed/           # Processed datasets
-│   └── harmonization/          # Geographic mapping files
+│   ├── harmonization/          # Geographic mapping files
+│   └── sample/                 # Sample data for GitHub (committed)
 ├── config.yaml                 # Configuration file
 └── requirements.txt            # Python dependencies
 ```
+
+## Data Privacy
+
+- **Real data**: Stored in `data/` directories and excluded from Git
+- **Sample data**: Only national-level aggregated data is shared
+- **Regional data**: Contains district-level information and is kept private
+- **Full datasets**: Multiple diseases and years are excluded from repository
 
 ## Configuration
 

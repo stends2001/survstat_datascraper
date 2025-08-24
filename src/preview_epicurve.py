@@ -13,8 +13,15 @@ def preview_epicurve(disease_name: str):
     disease_name: str 
         The name of the disease.
     """
+    # Get the directory path and check if it exists
+    data_dir = os.path.join(directories_dict['dir_data_preprocessed'], disease_name)
+    data_file = os.path.join(data_dir, f'{disease_name}.csv')
+    
+    if not os.path.exists(data_file):
+        raise FileNotFoundError(f"Data file not found: {data_file}")
+    
     regional_data = (DataProcessingOrchestrator(name=disease_name)
-                 .import_data(filename=f'{disease_name}.csv', directory=os.path.join(directories_dict['dir_data_preprocessed'], disease_name))
+                 .import_data(filename=f'{disease_name}.csv', directory=data_dir)
                  .change_dtype({'timestamp': 'datetime64[ns]',
                                 'year': 'str'})
                  )

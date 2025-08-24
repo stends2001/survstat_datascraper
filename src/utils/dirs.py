@@ -36,7 +36,15 @@ else:
     config = {}
 
 def get_path(key, default):
-    return Path(os.path.expanduser(config.get(key, default)))
+    """Get a path, making it absolute relative to project root if it's relative."""
+    config_value = config.get(key, default)
+    path = Path(os.path.expanduser(config_value))
+    
+    # If it's a relative path, make it absolute relative to project root
+    if not path.is_absolute():
+        path = project_root / path
+    
+    return path
 
 directories_dict = {
     'project_root': project_root,

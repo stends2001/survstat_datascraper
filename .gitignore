@@ -1,0 +1,23 @@
+# IDE and workspace files
+survstat_loading.code-workspace
+.vscode/
+.idea/
+
+# Python cache files
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Data directories - exclude all data but keep directory structure. Keep the sample data though
+# data/raw/*
+# data/preprocessed/*
+
+# Sample data directory - this will be committed for demonstration
+!data/sample/
+!data/sample/*
+src/create_sample_data.py
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/

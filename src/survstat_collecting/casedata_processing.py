@@ -4,7 +4,7 @@ from dataprocessor import DataProcessingOrchestrator
 from tqdm import tqdm
 import os
 import pandas as pd
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Literal
 from pathlib import Path
 import warnings
 from datetime import datetime
@@ -16,7 +16,7 @@ def preprocess_survstat_data(diseases:  Union[List[str], str],
                              years: Union[List[str], range, str, int],
                              raw_data_dir: Union[str, Path],
                              processed_data_dir: Union[str, Path],
-                             how: str
+                             how: Literal['construct','update']
                              ):
     """
     Processes downloaded survstat data. Each yearly dataset for the specific disease is merged into one dataset.
@@ -74,7 +74,7 @@ def preprocess_survstat_data(diseases:  Union[List[str], str],
         # Initialize merged_dataset based on mode
         if how == 'update':
             merged_dataset = DataProcessingOrchestrator().import_data(filename = f"{disease}.csv", directory = processed_datafolder).change_dtype({'year': 'str'}).filter([('year',years,'!in')])
-        elif how == 'reconstruct':  # reconstruct mode
+        elif how == 'construct':  # reconstruct mode
             merged_dataset = DataProcessingOrchestrator(name = f"{disease}_merged")
 
         else:
