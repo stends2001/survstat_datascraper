@@ -12,8 +12,8 @@ survstat_loading.code-workspace
 *.so
 
 # Data directories - exclude all data but keep directory structure. Keep the sample data though
-# data/raw/*
-# data/preprocessed/*
+data/raw/*
+data/preprocessed/*
 
 # Sample data directory - this will be committed for demonstration
 !data/sample/
