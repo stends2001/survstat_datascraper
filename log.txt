@@ -1,5 +1,5 @@
 
---- Script Run: 2025-08-24 13:50:58 ---
+--- Script Run: 2025-08-29 08:23:37 ---
 Years: 2001–2025
 Total years: 25
 Diseases:
@@ -24,4 +24,5 @@ Diseases:
 - Tuberculosis: tuberculosis
 - Dengue: dengue
 - Noroviral gastroenteritis: norovirus
+- COVID-19: covid
 --------------------------------
