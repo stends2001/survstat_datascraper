@@ -1,3 +1,7 @@
+# TO BE UPDATED
+- Pathmanagement
+- DataProcessor
+
 # SurvStat Loader
 
 A Python tool for automated data collection and processing from the [SurvStat@RKI](https://survstat.rki.de/) platform, Germany's interactive infectious disease surveillance system.
